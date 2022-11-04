@@ -129,6 +129,23 @@ class Empatica():
         print("Rounding 1/targetRate:" + str(1/targetRate) + "to " + str(round(1/targetRate))) 
         sampleRate = str(round((1/targetRate),6) * 1000) + "ms"
         return self.mainFrame.resample(sampleRate).mean()
+        def fullAssemble(self, path):
+        #save the new directory path
+        newDirectory = unzipEmpatica(path)
+
+        #change our working directory into the unzipped folder
+        os.chdir(newDirectory)
+        
+        #need to initialize the mainframe with a sensor file
+        self.setMainFrame(self.processFile(os.path.join(newDirectory, 'ACC.csv')))
+
+        #keep adding new files to the dataframe by joining paths with file names 
+        self.updateMainFrame(self.processFile(os.path.join(newDirectory, 'BVP.csv')))
+        self.updateMainFrame(self.processFile(os.path.join(newDirectory, 'EDA.csv')))
+        self.updateMainFrame(self.processFile(os.path.join(newDirectory, 'HR.csv')))
+        self.updateMainFrame(self.processFile(os.path.join(newDirectory, 'TEMP.csv')))
+        self.finalizeFrame()
+
 
 #this code needs to be rewritten so as to be more general for other OS path formats (i.e. MAC/LINUX)
 def unzipEmpatica(path):
@@ -147,30 +164,7 @@ def unzipEmpatica(path):
     #return the path into the new directory
     return os.path.join(os.getcwd(),'temp_'+fileName)
 
-#need to gain access to the newly created folder     
-def fullAssemble(path, emp):
-    #save the new directory path
-    newDirectory = unzipEmpatica(path)
 
-    #change our working directory into the unzipped folder
-    os.chdir(newDirectory)
-    
-    #need to initialize the mainframe with a sensor file
-    emp.setMainFrame(emp.processFile(os.path.join(newDirectory, 'ACC.csv')))
-    
-    #working on finding the first active sensor and then calling the setMainFrame func on that specific file
-    firstOne = 0
-    for i in range(len(emp.binarySensorTrack)):
-        if emp.binarySensorTrack[i] == 1:
-            firstOne = i
-            break
-
-    #keep adding new files to the dataframe by joining paths with file names 
-    emp.updateMainFrame(emp.processFile(os.path.join(newDirectory, 'BVP.csv')))
-    emp.updateMainFrame(emp.processFile(os.path.join(newDirectory, 'EDA.csv')))
-    emp.updateMainFrame(emp.processFile(os.path.join(newDirectory, 'HR.csv')))
-    emp.updateMainFrame(emp.processFile(os.path.join(newDirectory, 'TEMP.csv')))
-    emp.finalizeFrame()
 
   
 
