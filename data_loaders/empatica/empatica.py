@@ -129,22 +129,6 @@ class Empatica():
         print("Rounding 1/targetRate:" + str(1/targetRate) + "to " + str(round(1/targetRate))) 
         sampleRate = str(round((1/targetRate),6) * 1000) + "ms"
         return self.mainFrame.resample(sampleRate).mean()
-        def fullAssemble(self, path):
-        #save the new directory path
-        newDirectory = unzipEmpatica(path)
-
-        #change our working directory into the unzipped folder
-        os.chdir(newDirectory)
-        
-        #need to initialize the mainframe with a sensor file
-        self.setMainFrame(self.processFile(os.path.join(newDirectory, 'ACC.csv')))
-
-        #keep adding new files to the dataframe by joining paths with file names 
-        self.updateMainFrame(self.processFile(os.path.join(newDirectory, 'BVP.csv')))
-        self.updateMainFrame(self.processFile(os.path.join(newDirectory, 'EDA.csv')))
-        self.updateMainFrame(self.processFile(os.path.join(newDirectory, 'HR.csv')))
-        self.updateMainFrame(self.processFile(os.path.join(newDirectory, 'TEMP.csv')))
-        self.finalizeFrame()
 
 
     def fullAssemble(self, path):

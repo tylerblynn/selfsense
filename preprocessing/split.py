@@ -21,7 +21,7 @@ from sklearn.preprocessing import OneHotEncoder
 
 
 class NParrays():
-    def __init__(self, time_steps, step, keep):
+    def __init__(self, time_steps, step):
         self.step = step
         self.time_steps = time_steps
 
