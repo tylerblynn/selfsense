@@ -43,7 +43,10 @@ class CNN():
 
         self.n_timesteps = self.x_train.shape[1]
         self.n_features = self.x_train.shape[2]
-        self.n_outputs = self.y_train.shape[1]
+        if len(y_train.shape) > 1:
+            self.n_outputs = self.y_train.shape[1]
+        else:
+            self.n_outputs = self.y_train.shape[0]
     
     def only_test_data(self, x_test, y_test):
         self.x_test = x_test
