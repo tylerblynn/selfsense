@@ -75,24 +75,26 @@ class NParrays():
         return reshaped_segments, labels, subject, times
     
 
-    def setArrays(self, df, one_hot_encode= True):
+    def setArrays(self, df, encode = True, one_hot_encode= True):
         self.x, self.y, self.sub, self.time = self.timeSlice(df)
-        y_vector = np.ravel(self.y) #encoder won't take column vector
-        le = LabelEncoder()
-        integer_encoded = le.fit_transform(y_vector)
-        if (one_hot_encode):
-            # integer encode
-            #convert from string to int
-            name_mapping = dict(zip(le.classes_, le.transform(le.classes_)))
-            print("One-hot-encoding: category names -> int -> one-hot")
-            print(name_mapping) # seems risky as interim step before one-hot
-            onehot_encoder = OneHotEncoder(sparse=False)
-            integer_encoded = integer_encoded.reshape(len(integer_encoded), 1)
-            onehot_encoded = onehot_encoder.fit_transform(integer_encoded)
-            print("One-hot-encoding",onehot_encoder.categories_)
-            self.y=onehot_encoded
-        else:
-            self.y = integer_encoded
+
+        if encode:
+            y_vector = np.ravel(self.y) #encoder won't take column vector
+            le = LabelEncoder()
+            integer_encoded = le.fit_transform(y_vector)
+            if (one_hot_encode):
+                # integer encode
+                #convert from string to int
+                name_mapping = dict(zip(le.classes_, le.transform(le.classes_)))
+                print("One-hot-encoding: category names -> int -> one-hot")
+                print(name_mapping) # seems risky as interim step before one-hot
+                onehot_encoder = OneHotEncoder(sparse=False)
+                integer_encoded = integer_encoded.reshape(len(integer_encoded), 1)
+                onehot_encoded = onehot_encoder.fit_transform(integer_encoded)
+                print("One-hot-encoding",onehot_encoder.categories_)
+                self.y=onehot_encoded
+            else:
+                self.y = integer_encoded
         
         #
 
