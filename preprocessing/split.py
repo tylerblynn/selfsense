@@ -1,20 +1,11 @@
 #all modules that Lee Hinkle used in his code. Included to cover all bases 
-import os
-import shutil
 import time
 from time import gmtime, strftime, localtime #for displaying Linux UTC timestamps in hh:mm:ss
 from datetime import datetime
 from datetime import timedelta
 import numpy as np
-import matplotlib.pyplot as plt # for plotting training curves
-from tensorflow import keras #added to save model
-from tensorflow.keras import layers #format matches MNIST example
-from tensorflow.keras.callbacks import EarlyStopping
 #imports for computing and displaying output metrics
-import seaborn as sns
 import pandas as pd
-from sklearn.metrics import classification_report
-from sklearn.metrics import accuracy_score, confusion_matrix, precision_recall_fscore_support
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import OneHotEncoder
@@ -55,7 +46,7 @@ class NParrays():
             segments.append(df_segX.to_numpy())
             labels.append(df['label'].iloc[i])
             subject.append(df['sub'].iloc[i])
-            times.append([df.index[i ], df.index[i + self.time_steps - 1]])
+            times.append([df.index[i], df.index[i + self.time_steps]])
                 
 
         # Bring the segments into a better shape, convert to nparrays
