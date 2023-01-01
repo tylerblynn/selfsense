@@ -39,7 +39,7 @@ class NParrays():
         relevantColumns = df.columns[:-2]
 
         #step through the data set and only take 
-        for i in range(0, len(df) - self.time_steps, self.step):
+        for i in range(0, len(df) - self.time_steps, self.step + 1):
             df_segX = df[relevantColumns].iloc[i: i + self.time_steps]
             df_lbl = df['label'].iloc[i: i + self.time_steps]
             df_sub = df['sub'].iloc[i: i + self.time_steps]

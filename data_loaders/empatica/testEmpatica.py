@@ -2,13 +2,17 @@ import pandas as pd
 import os
 import io
 import sys
-sys.path.append('..')
 import empatica
-path = os.path.join(os.getcwd(), '1574621345_A01F11.zip')
-emp = empatica.Empatica("Lee")
-emp.setMainFrame(emp.processFile(path))
+home = os.getcwd()
+os.chdir('..')
+print(os.getcwd())
+os.chdir('..')
+os.chdir(os.path.join(os.getcwd(), "preprocessing"))
+print(os.getcwd())
+import split
+os.chdir(home)
 
-emp.updateMainFrame(df)
+
 #from data_loaders import empaticau
 #this is an example of the pipeline for testing
 #first we will retrieve the name of the subject
