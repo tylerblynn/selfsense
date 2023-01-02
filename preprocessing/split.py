@@ -11,15 +11,13 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import OneHotEncoder
 
 
-class NParrays():
+class TimeSeriesNP():
     def __init__(self, time_steps, step):
         self.step = step
         self.time_steps = time_steps
 
     def timeSlice(self, df):
-        N_FEATURES = len(df.columns) - 2
-        # TODO - better yet pass in feature names and use length to set
-        # if step == time_steps there is no overlap
+        N_FEATURES = len(df.columns) - 2 #subtract 2 for labels and subject columns
 
         #use seperate arrays for each set of values
         segments = []
@@ -30,7 +28,7 @@ class NParrays():
         relevantColumns = df.columns[:-2]
 
         #step through the data set and only take 
-        for i in range(0, len(df) - self.time_steps, self.step+ 1):
+        for i in range(0, len(df) - self.time_steps, self.step):
             df_segX = df[relevantColumns].iloc[i: i + self.time_steps]
             df_lbl = df['label'].iloc[i: i + self.time_steps]
             df_sub = df['sub'].iloc[i: i + self.time_steps]
@@ -69,27 +67,24 @@ class NParrays():
     def setArrays(self, df, encode = True, one_hot_encode= True):
         self.x, self.y, self.sub, self.time = self.timeSlice(df)
 
+        #encode using integer or one-hot endcoding
         if encode:
             y_vector = np.ravel(self.y) #encoder won't take column vector
             le = LabelEncoder()
             integer_encoded = le.fit_transform(y_vector)
             if (one_hot_encode):
-                # integer encode
-                #convert from string to int
                 name_mapping = dict(zip(le.classes_, le.transform(le.classes_)))
-                print("One-hot-encoding: category names -> int -> one-hot")
-                print(name_mapping) # seems risky as interim step before one-hot
                 onehot_encoder = OneHotEncoder(sparse=False)
                 integer_encoded = integer_encoded.reshape(len(integer_encoded), 1)
                 onehot_encoded = onehot_encoder.fit_transform(integer_encoded)
-                print("One-hot-encoding",onehot_encoder.categories_)
                 self.y=onehot_encoded
             else:
                 self.y = integer_encoded
-        
-        #
+    
 
     def updateArrays(self, df):
+
+        #take existing arrays and simply stack the newer ones on the bottom
         temp_x, temp_y, temp_sub, temp_time = timeslice(df)
         self.x = np.vstack([self.x, temp_x])
         self.y = np.vstack([self.y, temp_y])
@@ -97,6 +92,9 @@ class NParrays():
         self.time = np.vstack([self.time, temp_time])
     
     def finalize(self):
+
+        #final step used in Lee Hinkle's implementation
+        #not entirely sure if it necessary
         self.x = np.delete(self.x, (0), axis=0) 
         self.y = np.delete(self.y, (0), axis=0) 
         self.sub = np.delete(self.sub, (0), axis=0)
@@ -104,7 +102,14 @@ class NParrays():
     
     
     #need to figure out a potentially more accesible way to pass in the name and indexes
-    #of the training and test subjects
+    #of the training and test subjectsabs
+
+    """
+    use a dictionary to pass in the splitting of the subjects.
+    should be useful for experiments but requires more testing
+    to ensure proper functionality.
+    
+    """
     def trainTestSplit_subj(self,
         verbose = True,
         incl_xyz_accel = False, # include component accel_x/y/z in ____X data
@@ -112,36 +117,10 @@ class NParrays():
         incl_val_group = False, # split train into train and validate
         split_subj = dict
                     (train_subj = [1,2],
-                    validation_subj = [11,21], #this is middle activity sub1&2
-                    test_subj = [3]),
-        one_hot_encode = False # make y into multi-column one-hot, one for each activity
+                    validation_subj = [11,21], 
+                    test_subj = [3]) 
         ):
-        #remove component accel if needed
-        """
-        if (not incl_xyz_accel):
-            print("Removing component accel")
-            self.x = np.delete(self.x, [0,1,2], 2)
-        if (not incl_rms_accel):
-            print("Removing total accel")
-            self.x = np.delete(self.x, [3], 2)
-        """  
-        #One-Hot-Encode y...there must be a better way when starting with strings
-        #https://machinelearningmastery.com/how-to-one-hot-encode-sequence-data-in-python/
-        if (one_hot_encode):
-            # integer encode
-            y_vector = np.ravel(self.y) #encoder won't take column vector
-            le = LabelEncoder()
-            integer_encoded = le.fit_transform(y_vector) #convert from string to int
-            name_mapping = dict(zip(le.classes_, le.transform(le.classes_)))
-            print("One-hot-encoding: category names -> int -> one-hot")
-            print(name_mapping) # seems risky as interim step before one-hot
-            onehot_encoder = OneHotEncoder(sparse=False)
-            integer_encoded = integer_encoded.reshape(len(integer_encoded), 1)
-            onehot_encoded = onehot_encoder.fit_transform(integer_encoded)
-            print("One-hot-encoding",onehot_encoder.categories_)
-            self.y=onehot_encoded
-            #return X,y
-        # split by subject number pass in dictionary
+
         sub_num = np.ravel(self.sub[ : , 0] ) # convert shape to (1047,)
         print(sub_num)
         if (not incl_val_group):
