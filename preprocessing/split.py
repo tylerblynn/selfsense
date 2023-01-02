@@ -80,7 +80,7 @@ class TimeSeriesNP():
                 onehot_encoded = onehot_encoder.fit_transform(integer_encoded)
                 self.y=onehot_encoded
             else:
-                self.y = integer_encoded
+                self.y = le.transform(self.y)
     
 
     def updateArrays(self, df):
