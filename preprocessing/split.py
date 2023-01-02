@@ -18,7 +18,6 @@ class TimeSeriesNP():
 
     def timeSlice(self, df):
         N_FEATURES = len(df.columns) - 2 #subtract 2 for labels and subject columns
-
         #use seperate arrays for each set of values
         segments = []
         labels = []
@@ -64,14 +63,14 @@ class TimeSeriesNP():
         return reshaped_segments, labels, subject, times
     
 
-    def setArrays(self, df, encode = True, one_hot_encode= True):
+    def setArrays(self, df, labels, encode = True, one_hot_encode= True):
         self.x, self.y, self.sub, self.time = self.timeSlice(df)
 
         #encode using integer or one-hot endcoding
         if encode:
             y_vector = np.ravel(self.y) #encoder won't take column vector
             le = LabelEncoder()
-            integer_encoded = le.fit_transform(y_vector)
+            integer_encoded = le.fit_transform(labels)
             self.mapping = dict(zip(le.classes_, range(len(le.classes_))))
             
             if (one_hot_encode):
