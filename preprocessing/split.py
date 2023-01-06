@@ -59,7 +59,6 @@ class TimeSeriesNP():
         np.unique(bad_data_locations[:,0]) #[:,0] accesses just 1st column
         if (bad_data_locations.size!=0):
             print("Warning: Output arrays contain NaN entries")
-            print("execute print(X[99]) # to view single sample")
         return reshaped_segments, labels, subject, times
     
 
