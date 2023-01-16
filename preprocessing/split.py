@@ -70,10 +70,9 @@ class TimeSeriesNP():
             y_vector = np.ravel(self.y) #encoder won't take column vector
             le = LabelEncoder()
             integer_encoded = le.fit_transform(labels)
-            self.mapping = dict(zip(le.classes_, range(len(le.classes_))))
+            self.mapping = dict(zip( range(len(le.classes_)), le.classes_))
             
             if (one_hot_encode):
-                name_mapping = dict(zip(le.classes_, le.transform(le.classes_)))
                 onehot_encoder = OneHotEncoder(sparse=False)
                 integer_encoded = integer_encoded.reshape(len(integer_encoded), 1)
                 onehot_encoded = onehot_encoder.fit_transform(integer_encoded)
