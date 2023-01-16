@@ -10,7 +10,10 @@ import sys
 sys.path.append('..')
 from preprocessing import split
 
+#class only works
 class CNN():
+
+    #give the user seperate options for whether or not they want to use validation data
     def importNP(self, x_train, y_train, x_test, y_test):
         self.validation = False
         self.x_train = x_train
@@ -33,6 +36,7 @@ class CNN():
         self.n_features = x_train.shape[2]
         self.n_outputs = y_train.shape[1]
 
+    #use all of the data to traint he model
     def only_train_data(self, x_train, x_validation, y_train, y_validation ):
         self.validation = True
 
@@ -75,7 +79,7 @@ class CNN():
         # increasing dropout to 0.8 and higher requires more than 100 epochs
         # see https://www.tensorflow.org/api_docs/python/tf/keras/callbacks/EarlyStopping
         callback = EarlyStopping(monitor='val_loss', mode = 'min', patience=20)
-        self.model.compile(loss="categorical_crossentropy", optimizer="adam", metrics=["accuracy"])
+        self.model.compile(loss="sparse_categorical_crossentropy", optimizer="adam", metrics=["accuracy"])
         if self.validation:
             self.history = self.model.fit(
             self.x_train, self.y_train,
@@ -101,12 +105,3 @@ class CNN():
             return (accuracy_score(y_temp, y_pred)),y_pred, predictions
         else:
             return (accuracy_score(y_temp, y_pred)),y_pred
-
-    """" 
-    placing this in functions seems totally redundant        
-    def saveModel(modelName):
-        self.model.save(modelName)
-
-    def loadModel(modelName):
-        self.model = load_model(modelName)
-    """
