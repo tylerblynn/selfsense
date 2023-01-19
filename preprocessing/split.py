@@ -41,7 +41,8 @@ class TimeSeriesNP():
                 continue
             
             segments.append(df_segX.to_numpy())
-            labels.append(df['label'].iloc[i])
+            if 'label' in df.columns:
+                labels.append(df['label'].iloc[i])
             subject.append(df['sub'].iloc[i])
             times.append([df.index[i], df.index[i + self.time_steps]])
                 
@@ -99,9 +100,6 @@ class TimeSeriesNP():
         self.sub = np.delete(self.sub, (0), axis=0)
         self.sub = sub.astype(int) # convert from float to int
     
-    
-    #need to figure out a potentially more accesible way to pass in the name and indexes
-    #of the training and test subjectsabs
 
     """
     use a dictionary to pass in the splitting of the subjects.
