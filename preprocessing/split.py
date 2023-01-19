@@ -18,10 +18,12 @@ class TimeSeriesNP():
 
     def timeSlice(self, df):
         N_FEATURES = len(df.columns)
+        not_features = 0
         if 'label' in df.columns:
-            N_FEATURES -=1
+            not_features+=1
         if 'sub' in df.columns:
-            N_FEATURES-=1    
+            not_features+=1
+        N_FEATURES-=not_features  
         #subtract 2 for labels and subject columns
         #use seperate arrays for each set of values
         segments = []
@@ -29,7 +31,7 @@ class TimeSeriesNP():
         subject = []
         times = []
         steps = 0
-        relevantColumns = df.columns[:-2]
+        relevantColumns = df.columns[:-not_features]
 
         #step through the data set and only take 
         for i in range(0, len(df) - self.time_steps, self.step):
@@ -37,7 +39,7 @@ class TimeSeriesNP():
 
             if 'label' in df.columns:
                 df_lbl = df['label'].iloc[i: i + self.time_steps]
-                labels.append(df['label'].iloc[i])
+                labels.append(df['label'].iloc[i]) 
 
             if 'sub' in df.columns:
                 df_sub = df['sub'].iloc[i: i + self.time_steps]
