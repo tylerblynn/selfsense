@@ -17,6 +17,10 @@ class TimeSeriesNP():
         self.time_steps = time_steps
 
     def timeSlice(self, df):
+
+        #I am doing it this way because in the future the user should be able to 
+        #enter a data set that does not contain subject and label columns without
+        #breaking the functionality
         N_FEATURES = len(df.columns)
         not_features = 0
         if 'label' in df.columns:
@@ -24,6 +28,7 @@ class TimeSeriesNP():
         if 'sub' in df.columns:
             not_features+=1
         N_FEATURES-= not_features  
+
         #subtract 2 for labels and subject columns
         #use seperate arrays for each set of values
         segments = []
@@ -32,26 +37,21 @@ class TimeSeriesNP():
         times = []
         steps = 0
         relevantColumns = df.columns[:-not_features]
-        print(relevantColumns)
 
         #step through the data set and only take 
         for i in range(0, len(df) - self.time_steps, self.step):
             df_segX = df[relevantColumns].iloc[i: i + self.time_steps]
-
-            if 'label' in df.columns:
-                df_lbl = df['label'].iloc[i: i + self.time_steps]
-                labels.append(df['label'].iloc[i]) 
-
-            if 'sub' in df.columns:
-                df_sub = df['sub'].iloc[i: i + self.time_steps]
-                subject.append(df['sub'].iloc[i])
-
+            df_lbl = df['label'].iloc[i: i + self.time_steps]
+            df_sub = df['sub'].iloc[i: i + self.time_steps]
+            
             # Save only if labels are the same for the entire segment and valid
             if (df_lbl.value_counts().iloc[0] != self.time_steps):
                 continue
             if 'Undefined' in df_lbl.values :
                 continue
- 
+
+            subject.append(df['sub'].iloc[i])
+            labels.append(df['label'].iloc[i]) 
             segments.append(df_segX.to_numpy())   
             times.append([df.index[i], df.index[i + self.time_steps]])
                 
