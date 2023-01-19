@@ -43,7 +43,8 @@ class TimeSeriesNP():
             segments.append(df_segX.to_numpy())
             if 'label' in df.columns:
                 labels.append(df['label'].iloc[i])
-            subject.append(df['sub'].iloc[i])
+            if 'sub' in df.columns:
+                subject.append(df['sub'].iloc[i])
             times.append([df.index[i], df.index[i + self.time_steps]])
                 
 
