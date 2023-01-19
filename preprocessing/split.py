@@ -23,7 +23,7 @@ class TimeSeriesNP():
             not_features+=1
         if 'sub' in df.columns:
             not_features+=1
-        N_FEATURES-=not_features  
+        N_FEATURES-= not_features  
         #subtract 2 for labels and subject columns
         #use seperate arrays for each set of values
         segments = []
@@ -32,6 +32,7 @@ class TimeSeriesNP():
         times = []
         steps = 0
         relevantColumns = df.columns[:-not_features]
+        print(relevantColumns)
 
         #step through the data set and only take 
         for i in range(0, len(df) - self.time_steps, self.step):
@@ -79,7 +80,7 @@ class TimeSeriesNP():
             y_vector = np.ravel(self.y) #encoder won't take column vector
             le = LabelEncoder()
             integer_encoded = le.fit_transform(labels)
-            self.mapping = dict(zip( range(len(le.classes_)), le.classes_))
+            self.mapping = dict(zip(range(len(le.classes_)), le.classes_))
             
             if (one_hot_encode):
                 onehot_encoder = OneHotEncoder(sparse=False)
