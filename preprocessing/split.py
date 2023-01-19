@@ -29,22 +29,22 @@ class TimeSeriesNP():
         #step through the data set and only take 
         for i in range(0, len(df) - self.time_steps, self.step):
             df_segX = df[relevantColumns].iloc[i: i + self.time_steps]
-            df_lbl = df['label'].iloc[i: i + self.time_steps]
-            df_sub = df['sub'].iloc[i: i + self.time_steps]
+
+            if 'label' in df.columns:
+                df_lbl = df['label'].iloc[i: i + self.time_steps]
+                labels.append(df['label'].iloc[i])
+                
+            if 'sub' in df.columns:
+                df_sub = df['sub'].iloc[i: i + self.time_steps]
+                subject.append(df['sub'].iloc[i])
+
             # Save only if labels are the same for the entire segment and valid
             if (df_lbl.value_counts().iloc[0] != self.time_steps):
                 continue
             if 'Undefined' in df_lbl.values :
                 continue
-            if (df_sub.value_counts().iloc[0] != self.time_steps):
-                print('Segment at','contains multiple subjects.  Discarding.')
-                continue
-            
-            segments.append(df_segX.to_numpy())
-            if 'label' in df.columns:
-                labels.append(df['label'].iloc[i])
-            if 'sub' in df.columns:
-                subject.append(df['sub'].iloc[i])
+ 
+            segments.append(df_segX.to_numpy())   
             times.append([df.index[i], df.index[i + self.time_steps]])
                 
 
